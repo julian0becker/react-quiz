@@ -1,13 +1,21 @@
 import React, { Component } from "react";
-
+import Modal from "react-modal";
 import "./App.css";
 
+class AddQuestion {
+  constructor(question, choices, correct) {
+    this.id = 3;
+    this.question = question;
+    this.choices = choices;
+    this.correct = correct;
+  }
+}
 class App extends Component {
   state = {
     quiz: [
       {
         id: 0,
-        question: "Q1: Who came up with the theory of relativity?",
+        question: "Who came up with the theory of relativity?",
         image:
           "http://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/220px-Albert_Einstein_Head.jpg",
         choices: [
@@ -22,7 +30,7 @@ class App extends Component {
       },
       {
         id: 1,
-        question: "Q2: Who is on the two dollar bill?",
+        question: "Who is on the two dollar bill?",
         image:
           "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/US_%242_obverse-high.jpg/320px-US_%242_obverse-high.jpg",
         choices: [
@@ -37,7 +45,7 @@ class App extends Component {
       },
       {
         id: 2,
-        question: "Q3: What event began on April 12, 1861?",
+        question: "What event began on April 12, 1861?",
         image: "",
         choices: [
           "First manned flight",
@@ -52,7 +60,8 @@ class App extends Component {
     ],
     pageCounter: 0,
     correctAnswers: 0,
-    clicked: false
+    clicked: false,
+    isModalOn: false
   };
 
   handleEvaluate = (clickedChoice, rightAnswer) => {
@@ -76,6 +85,59 @@ class App extends Component {
     }
   };
 
+  handleDeleteQuestion = questionId => {
+    const quiz = [...this.state.quiz];
+    const filtered = quiz.filter(question => question.id !== questionId);
+    this.setState({ quiz: filtered });
+  };
+
+  handleAddQuestionOpenModal = () => {
+    this.setState({ isModalOn: true });
+  };
+
+  handleAddQuestion = event => {
+    event.preventDefault();
+    const quiz = [...this.state.quiz];
+
+    let correct = event.target.correct.value;
+
+    switch (true) {
+      case correct === "a":
+        correct = event.target.answerA.value;
+        break;
+      case correct === "b":
+        correct = event.target.answerB.value;
+        break;
+      case correct === "c":
+        correct = event.target.answerC.value;
+        break;
+      case correct === "d":
+        correct = event.target.answerD.value;
+        break;
+      default:
+        break;
+    }
+
+    const addedQuestion = new AddQuestion(
+      event.target.question.value,
+      [
+        event.target.answerA.value,
+        event.target.answerB.value,
+        event.target.answerC.value,
+        event.target.answerD.value
+      ],
+      correct
+    );
+    quiz.push(addedQuestion);
+
+    this.setState({ quiz: quiz });
+    this.handleCloseModal();
+  };
+
+  handleCloseModal = () => {
+    this.setState({ isModalOn: false });
+  };
+
   render() {
     return (
       <div className="App d-flex justify-content-center">
@@ -85,6 +147,8 @@ class App extends Component {
             handleEvaluate={this.handleEvaluate}
             pageCounter={this.state.pageCounter}
             clicked={this.state.clicked}
+            handleDeleteQuestion={this.handleDeleteQuestion}
+            handleAddQuestionOpenModal={this.handleAddQuestionOpenModal}
           />
         ) : (
           <Result
@@ -92,6 +156,12 @@ class App extends Component {
             quiz={this.state.quiz}
           />
         )}
+
+        <EditModal
+          isModalOn={this.state.isModalOn}
+          handleCloseModal={this.handleCloseModal}
+          handleAddQuestion={this.handleAddQuestion}
+        />
       </div>
     );
   }
@@ -107,7 +177,12 @@ const Display = props => (
       pageCounter={props.pageCounter}
       clicked={props.clicked}
     />
-    <Next quiz={props.quiz} pageCounter={props.pageCounter} />
+    <Next
+      quiz={props.quiz}
+      pageCounter={props.pageCounter}
+      handleDeleteQuestion={props.handleDeleteQuestion}
+      handleAddQuestionOpenModal={props.handleAddQuestionOpenModal}
+    />
   </div>
 );
 
@@ -145,10 +220,30 @@ const Question = props => {
 };
 
 const Next = props => (
-  <div className="card-footer text-muted">
-    {props.pageCounter + 1}
-    {" / "}
-    {props.quiz.length}
+  <div className="d-flex card-footer text-muted">
+    <div className=" d-flex justify-content-start flex-item">
+      <button
+        onClick={() =>
+          props.handleDeleteQuestion(props.quiz[props.pageCounter].id)
+        }
+        className="btn btn-primary"
+      >
+        Delete Question
+      </button>
+    </div>
+    <div className="flex-item">
+      {props.pageCounter + 1}
+      {" / "}
+      {props.quiz.length}
+    </div>
+    <div className="d-flex flex-item justify-content-end">
+      <button
+        onClick={props.handleAddQuestionOpenModal}
+        className="btn btn-primary"
+      >
+        Add Question
+      </button>
+    </div>
   </div>
 );
 
@@ -206,3 +301,39 @@ class Choice extends Component {
     );
   }
 }
+
+const EditModal = props => (
+  <Modal
+    isOpen={!!props.isModalOn}
+    contentLabel={"test this modal"}
+    onRequestClose={props.handleCloseModal}
+    className="modalStyle"
+    ariaHideApp={false}
+  >
+    <div id="modalForm">
+      <form
+        className="d-flex flex-column"
+        onSubmit={event => props.handleAddQuestion(event)}
+      >
+        <input type="text" name="question" required />
+        <span className="d-flex align-items-center">
+          <input type="radio" name="correct" value="a" />
+          <input type="text" name="answerA" required />
+        </span>
+        <span className="d-flex align-items-center">
+          <input type="radio" name="correct" value="b" />
+          <input type="text" name="answerB" required />
+        </span>
+        <span className="d-flex align-items-center">
+          <input type="radio" name="correct" value="c" />
+          <input type="text" name="answerC" required />
+        </span>
+        <span className="d-flex align-items-center">
+          <input type="radio" name="correct" value="d" />
+          <input type="text" name="answerD" required />
+        </span>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+  </Modal>
+);
