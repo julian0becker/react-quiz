@@ -37,10 +37,22 @@ li {
 }
 
 #modalForm {
-  background-color: black;
-  min-width: 200px;
-
+  background-color: #272b30;
+  padding: 2rem;
   display: flex;
   align-items: center;
   border: 2px solid whitesmoke;
+}
+
+i {
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.fa-caret-left {
+  visibility: hidden;
+}
+
+#delete-button {
+  visibility: hidden;
 }

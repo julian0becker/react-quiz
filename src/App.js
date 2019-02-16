@@ -138,6 +138,10 @@ class App extends Component {
     this.setState({ isModalOn: false });
   };
 
+  handleNextQuestion = () => {
+    console.log("next");
+    this.setState({ pageCounter: this.state.pageCounter + 1 });
+  };
   render() {
     return (
       <div className="App d-flex justify-content-center">
@@ -149,6 +153,7 @@ class App extends Component {
             clicked={this.state.clicked}
             handleDeleteQuestion={this.handleDeleteQuestion}
             handleAddQuestionOpenModal={this.handleAddQuestionOpenModal}
+            handleNextQuestion={this.handleNextQuestion}
           />
         ) : (
           <Result
@@ -182,6 +187,7 @@ const Display = props => (
       pageCounter={props.pageCounter}
       handleDeleteQuestion={props.handleDeleteQuestion}
       handleAddQuestionOpenModal={props.handleAddQuestionOpenModal}
+      handleNextQuestion={props.handleNextQuestion}
     />
   </div>
 );
@@ -223,6 +229,7 @@ const Next = props => (
   <div className="d-flex card-footer text-muted">
     <div className=" d-flex justify-content-start flex-item">
       <button
+        id="delete-button"
         onClick={() =>
           props.handleDeleteQuestion(props.quiz[props.pageCounter].id)
         }
@@ -232,9 +239,14 @@ const Next = props => (
       </button>
     </div>
     <div className="flex-item">
+      <i className="fas fa-caret-left fa-2x" />
       {props.pageCounter + 1}
       {" / "}
       {props.quiz.length}
+      <i
+        onClick={props.handleNextQuestion}
+        className="fas fa-caret-right fa-2x"
+      />
     </div>
     <div className="d-flex flex-item justify-content-end">
       <button
@@ -312,27 +324,81 @@ const EditModal = props => (
   >
     <div id="modalForm">
       <form
-        className="d-flex flex-column"
+        className="d-flex flex-column form-group"
         onSubmit={event => props.handleAddQuestion(event)}
       >
-        <input type="text" name="question" required />
-        <span className="d-flex align-items-center">
-          <input type="radio" name="correct" value="a" />
-          <input type="text" name="answerA" required />
-        </span>
-        <span className="d-flex align-items-center">
-          <input type="radio" name="correct" value="b" />
-          <input type="text" name="answerB" required />
-        </span>
-        <span className="d-flex align-items-center">
-          <input type="radio" name="correct" value="c" />
-          <input type="text" name="answerC" required />
-        </span>
-        <span className="d-flex align-items-center">
-          <input type="radio" name="correct" value="d" />
-          <input type="text" name="answerD" required />
-        </span>
-        <button type="submit">Add</button>
+        <input
+          className="form-group form-control"
+          type="text"
+          name="question"
+          placeholder="Enter a new question"
+          required
+        />
+        <div className="d-flex flex-column align-items-center">
+          <span className="d-flex align-items-center form-group">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="correct"
+              value="a"
+            />
+            <input
+              className="form-control-sm"
+              type="text"
+              name="answerA"
+              placeholder="Option A"
+              required
+            />
+          </span>
+          <span className="d-flex align-items-center form-group  ">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="correct"
+              value="b"
+            />
+            <input
+              className="form-control-sm "
+              type="text"
+              name="answerB"
+              placeholder="Option B"
+              required
+            />
+          </span>
+          <span className="d-flex align-items-center form-group">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="correct"
+              value="c"
+            />
+            <input
+              className="form-control-sm "
+              type="text"
+              name="answerC"
+              placeholder="Option C"
+              required
+            />
+          </span>
+          <span className="d-flex align-items-center form-group">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="correct"
+              value="d"
+            />
+            <input
+              className="form-control-sm "
+              type="text"
+              name="answerD"
+              placeholder="Option D"
+              required
+            />
+          </span>
+        </div>
+        <button className="btn bt-sm btn-primary" type="submit">
+          Add Question
+        </button>
       </form>
     </div>
   </Modal>
