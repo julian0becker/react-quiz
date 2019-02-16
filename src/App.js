@@ -175,7 +175,7 @@ class App extends Component {
 export default App;
 
 const Display = props => (
-  <div className="w-50">
+  <div className=" media-q">
     <Question
       quiz={props.quiz}
       handleEvaluate={props.handleEvaluate}
@@ -260,7 +260,7 @@ const Next = props => (
 );
 
 const Result = props => (
-  <div className="card text-white bg-primary mb-3 w-50">
+  <div className="card text-white bg-primary mb-3  media-q">
     <div className="card-header">Quiz</div>
     <div className="card-body">
       <h4 className="card-title">Congratulations!</h4>
